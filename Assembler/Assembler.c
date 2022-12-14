@@ -174,6 +174,7 @@ int GetRegister (char *reg)
 	}
 }
 
+// add, sub, mul, and, or , xor, sll, sra, srl, beq, bne, blt, bgt, ble, bge, jal, lw, sw, reti, in, out, halt
 void Do_R_inst(int op, int rd int rs, int rt )
 {
 	switch (op)
@@ -188,7 +189,57 @@ void Do_R_inst(int op, int rd int rs, int rt )
 		RegArry[rd] = RegArry[rs] * RegArry[rt];
 		break;
 	case and:
-
+		// b.w 
+		RegArry[rd] = RegArry[rs] & RegArry[rt];
+		break;
+	case or:
+		// b.w 
+		RegArry[rd] = RegArry[rs] | RegArry[rt];
+		break;
+	case xor:
+		// b.w 
+		RegArry[rd] = RegArry[rs] ^ RegArry[rt];
+		break;
+	case sll:
+		RegArry[rd] = RegArry[rs] << RegArry[rt];
+		break;
+	// ??????????????????????????????
+	case sra:
+		RegArry[rd] = RegArry[rs] >> RegArry[rt];
+		break;
+	case srl:
+		RegArry[rd] = RegArry[rs] >> RegArry[rt];
+		break;
+	case beq:
+		if (RegArry[rs] == RegArry[rt]) :
+			PC = RegArry[rd];
+		break;
+	case bne:
+		if (RegArry[rs] != RegArry[rt]) :
+			PC = RegArry[rd];
+		break;
+	case blt:
+		if (RegArry[rs] < RegArry[rt]) :
+			PC = RegArry[rd];
+		break;
+	case bgt:
+		if (RegArry[rs] > RegArry[rt]) :
+			PC = RegArry[rd];
+		break;
+	case ble:
+		if (RegArry[rs] <= RegArry[rt]) :
+			PC = RegArry[rd];
+		break;
+	case bge:
+		if (RegArry[rs] >= RegArry[rt]) :
+			PC = RegArry[rd];
+		break;
+	case jal:
+		RegArry[rd] = PC + 1; // +1 0r +4?? nedd to think if pc is relative.
+		PC = RegArry[rs];
+		break;
+	// left 
+	// lw, sw, reti, in, out, halt
 
 	default:
 		// default statements
@@ -211,7 +262,7 @@ int main(int argc, char* argv[])
 
 	do
 	{
-
+		// read line , split to tokens , do instraction 
 	};
 	while (!feof(fp));
 	fclose(fp);
