@@ -28,7 +28,10 @@ int main(int argc, char* argv[]) {
 	} // check if memout created.
 	
 	while (!foef(memin)) {
-		// read
+		fgets(line, MAX_LINE, memin);
+		// get hexa number and turn it into binary.
+		
+		
 	}
 	else
 		
