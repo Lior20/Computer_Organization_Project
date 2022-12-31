@@ -35,18 +35,18 @@ unsigned int reg[NUM_OF_REG]; // registers
 int main(int argc, char* argv[]) {
 	FILE* memin = NULL;
 	FILE* memout = NULL;
-	FILE* regout = NULL;
+	//FILE* regout = NULL;
 	char line[MAX_LINE];
 	
 	memin = fopen(argv[1], "r");
 	if (memin == NULL) {
 		printf("Error: Cannot open file\n");
-		return 1;
+		return False;
 	} // check if the file is open.
 	memout = fopen(argv[2], "w"); 
 	if (memout == NULL) { 
 		printf("Error: Cannot open file\n");
-		return 1;
+		return False;
 	} // check if memout created.
 	
 	while (!foef(memin)) {
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
 	fclose(memin);
 	fclose(memout);
 	fclose(regout);
-	return 0;
+	return True;
 	
 		
 }
@@ -97,8 +97,13 @@ instruction fetch() {
 	inst.rd = memory[PC + 4] << 24 | memory[PC + 5] << 16 | memory[PC + 6] << 8 | memory[PC + 7];
 	inst.rs = memory[PC + 8] << 24 | memory[PC + 9] << 16 | memory[PC + 10] << 8 | memory[PC + 11];
 	inst.rt = memory[PC + 12] << 24 | memory[PC + 13] << 16 | memory[PC + 14] << 8 | memory[PC + 15];
+	inst.imm = memory[PC + 16] << 24 | memory[PC + 17] << 16 | memory[PC + 18] << 8 | memory[PC + 19];
 	PC += 16;
 	return inst;
+
+
+	// read line from memin.txt and stores it char by char in inst.
+	
 }
 
 void execute(instruction instr) {
