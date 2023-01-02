@@ -49,7 +49,12 @@ int main(int argc, char* argv[]) {
 	FILE* trace = NULL;
 	FILE* cycles = NULL;
 
-	instruction instr;
+	instruction* instr = (instruction*)malloc(sizeof(instruction));
+	// check if memory was allocated:
+	if (instr == NULL) {
+		printf("Error: malloc failed");
+		exit(1);
+	}
 
 	int imm_check = 0;
 	
