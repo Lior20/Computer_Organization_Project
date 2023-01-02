@@ -18,21 +18,25 @@ typedef struct {
 	int rd;
 	int rs;
 	int rt;
-	int imm;
+	int32_t imm;
 }instruction;
 
 
 // Declearation of functions:
 void read_file(char* file_name);
-void read_instructions(char* line);
+void read_instructions(int PC, char memin_array[], instruction* inst);
 instruction fetch();
 void execute(instruction inst);
 
 // Define Variables:
 int PC = 0; // program counter
+int imm_check = 0; // check if the instruction is I-type or not.
+int cycles_count = 0; // count the number of cycles.
 unsigned int memory[MAX_MEMO_LINES]; // memory
-int reg[NUM_OF_REG] = { 0 }; // registers
+int reg[NUM_OF_REG] = { 0 }; // registers 
+
 char memin_array[MAX_MEMO_LINES][MAX_LINE]; // array of memory input.
+
 // initialise memin_array with chars of zeros:
 void init_memin_array() {
 	for (int i = 0; i < MAX_MEMO_LINES; i++) {
@@ -42,6 +46,8 @@ void init_memin_array() {
 	}
 }
 
+
+// Main Function:
 int main(int argc, char* argv[]) {
 	FILE* memin = NULL;
 	FILE* memout = NULL;
@@ -50,15 +56,14 @@ int main(int argc, char* argv[]) {
 	FILE* cycles = NULL;
 
 	instruction* instr = (instruction*)malloc(sizeof(instruction));
+	
 	// check if memory was allocated:
 	if (instr == NULL) {
 		printf("Error: malloc failed");
 		exit(1);
 	}
 
-	int imm_check = 0;
-	int cycles_count = 0;
-	
+	// open files: 
 	memin = fopen(agrv[1], "r");
 	// check if memin file was opened:
 	if (memin == NULL) {
@@ -106,13 +111,18 @@ int main(int argc, char* argv[]) {
 		
 		execute(instr);
 		
+		// update PC & cycles_count:
 		if (imm_check == 1) {
 			PC = PC + 2;
+			cycles_count += 1; // add 1 cycle to the cycles counter due to constant loading
 			imm_check = 0;
 		}
 		else {
 			PC = PC + 1;
 		}
+		if ((instr->opcode == 0x10) || (instr->opcode == 0x11)) cycles_count++; // add 1 cycle to the cycles counter due to lw / sw instructions
+		cycles_count++;
+		
 	}
 	
 	// print memory to memout.txt file:
@@ -124,6 +134,9 @@ int main(int argc, char* argv[]) {
 	for (i = 2; i < NUM_OF_REG; i++) {
 		fprintf(regout, "%08x\n", reg[i]);
 	}
+	
+	// print cycles to cycles.txt file:
+	fprintf(cycles, "%d\n", cycles_count);
 	
 	// close files:
 	fclose(memin);
@@ -138,42 +151,6 @@ int main(int argc, char* argv[]) {
 	
 		
 }
-
-
-
-
-
-
-
-
-/* memin = fopen(argv[1], "r");
-if (memin == NULL) {
-	printf("Error: Cannot open file\n");
-	return False;
-} // check if the file is open.
-memout = fopen(argv[2], "w");
-if (memout == NULL) {
-	printf("Error: Cannot open file\n");
-	return False;
-} // check if memout created.
-
-while (!foef(memin)) {
-	fgets(line, MAX_LINE, memin);
-	// get hexa number and turn it into binary.
-
-
-}
-*/
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -212,10 +189,12 @@ int read_instructions(int PC, char memin_array[], instruction* inst) {
 	
 	// check if the instruction is R-type or I-type:
 	if (instr.rs == 1) {
-		imm_check = 1;
+		imm_check = 1; // indicate that the instruction is I-type.
+		cycles_count += 1; // add 1 cycle to the cycles counter due to constant loading
 		strncpy(imm[0], memin_array[PC + 1][0], 5); // get the imm
-		instr.imm = strtol(imm, NULL, 16); // convert the imm to decimal.
+		instr.imm = (int32_t)strtol(imm, NULL, 16); // convert the imm to decimal and sign extend it.
 		instr.rs = instr.imm;
+		
 	}
 	
 	strncpy(rt, memin_array[PC][4], 1); // get the rt
@@ -223,35 +202,14 @@ int read_instructions(int PC, char memin_array[], instruction* inst) {
 	// check if the instruction is R-type or I-type:
 	if (instr.rt == 1) {
 		imm_check = 1;
+		cycles_count += 1; // add 1 cycle to the cycles counter due to constant loading
 		strncpy(imm[0], memin_array[PC + 1][0], 5); // get the imm
-		instr.imm = strtol(imm, NULL, 16); // convert the imm to decimal.
+		instr.imm = (int32_t)strtol(imm, NULL, 16); // convert the imm to decimal and sign extend it.
 		instr.rt = instr.imm;
 	}
 
 
 	return imm_check;
-}
-
-instruction fetch() {
-	instruction inst;
-	char line[MAX_LINE];
-	fgets(line, MAX_LINE, memin);
-	strncpy(inst.opcode, line, 2)
-	inst.opcode = memory[PC] << 24 | memory[PC + 1] << 16 | memory[PC + 2] << 8 | memory[PC + 3];
-	inst.rd = memory[PC + 4] << 24 | memory[PC + 5] << 16 | memory[PC + 6] << 8 | memory[PC + 7];
-	inst.rs = memory[PC + 8] << 24 | memory[PC + 9] << 16 | memory[PC + 10] << 8 | memory[PC + 11];
-	inst.rt = memory[PC + 12] << 24 | memory[PC + 13] << 16 | memory[PC + 14] << 8 | memory[PC + 15];
-	inst.imm = memory[PC + 16] << 24 | memory[PC + 17] << 16 | memory[PC + 18] << 8 | memory[PC + 19];
-	PC += 16;
-	return inst;
-
-
-	// read line from memin.txt and stores it char by char in inst.
-	
-
-	
-	
-	
 }
 
 void execute(instruction instr) {
