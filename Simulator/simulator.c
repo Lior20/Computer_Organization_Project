@@ -57,19 +57,48 @@ int main(int argc, char* argv[]) {
 	}
 
 	int imm_check = 0;
+	int cycles_count = 0;
 	
-	trace = fopen(argv[3], "w");
-	// check if the file is open:
+	memin = fopen(agrv[1], "r");
+	// check if memin file was opened:
+	if (memin == NULL) {
+		printf("Error: memin file was not opened");
+		exit(1);
+	}
+	
+	memout = fopen(agrv[2], "w");
+	// check if memout file was opened:
+	if (memout == NULL) {
+		printf("Error: memout file was not opened");
+		exit(1);
+	}
+
+	regout = fopen(agrv[3], "w");
+	// check if regout file was opened:
+	if (regout == NULL) {
+		printf("Error: regout file was not opened");
+		exit(1);
+	}
+	
+	trace = fopen(argv[4], "w");
+	// check if memin file was opened:
 	if (trace == NULL) {
 		printf("Error: Cannot open file\n");
 		return False;
 	} 
 	
-
-
+	cycles = fopen(argv[5], "w");
+	// check if memin file was opened:
+	if (cycles == NULL) {
+		printf("Error: Cannot open file\n");
+		return False;
+	}
+	
+	// read memin file into memin_array:
+	read_file(memin);
 	
 	while (PC) {
-		read_file(argv[1]);
+
 		imm_check = read_instructions(PC, memin_array, instr);
 		
 		// write to trace.txt file:
@@ -86,10 +115,25 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	
-	//fclose(memin);
+	// print memory to memout.txt file:
+	for (i = 0; i < MAX_MEMO_LINES; i++) {
+		fprintf(memout, "%08x\n", memory[i]);
+	}
+
+	// print registers to regout.txt file:
+	for (i = 2; i < NUM_OF_REG; i++) {
+		fprintf(regout, "%08x\n", reg[i]);
+	}
+	
+	// close files:
+	fclose(memin);
 	fclose(memout);
 	fclose(regout);
 	fclose(trace);
+	fclose(cycles);
+	free(instr);
+	
+	// return 0 if no errors:
 	return True;
 	
 		
