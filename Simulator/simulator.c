@@ -152,10 +152,6 @@ int main(int argc, char* argv[]) {
 		
 }
 
-
-
-
-
 // Functions Implementation:
 
 void read_file(char* file_name) {
