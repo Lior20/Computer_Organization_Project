@@ -9,6 +9,7 @@
 #define False 0;
 #define MAX_LINE 5 // maximum line length in memin.txt.
 #define MAX_LABEL 50 // the maximum lable size is 50.
+
 #define MAX_MEMO_LINES 4096 // maximum number of lines in the memory.
 #define NUM_OF_REG 16 // number of registers.
 
