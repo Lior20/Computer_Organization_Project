@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
 	// read memin file into memin_array:
 	read_file(memin);
 	
-	while (PC) {
+	while (PC>-1) {
 
 		imm_check = read_instructions(PC, memin_array, instr);
 		
@@ -155,22 +155,15 @@ int main(int argc, char* argv[]) {
 // Functions Implementation:
 
 void read_file(char* file_name) {
-	FILE* file = NULL;
+	FILE* file = file_name;
 	char line[MAX_LINE];
 	int i = 0;
-	file = fopen(file_name, "r");
-	// check if the file is open:
-	if (file == NULL) {
-		printf("Error: Cannot open file\n");
-		return 1;
-	}
 	// read the file line by line:
 	while (!feof(file)) {
 		fgets(line, MAX_LINE, file); // get line from file.
 		strncpy(memin_array[i][], line, MAX_LINE); // copy the line into the array of memin_array.
 		i++; // increase the index of the array.
 	}
-	fclose(file);
 }
 
 int read_instructions(int PC, char memin_array[], instruction* inst) {
@@ -277,6 +270,10 @@ void execute(instruction instr) {
 	case 0x11: // sw
 		memory[reg[instr.rs] + instr.rt] = reg[instr.rd];
 		break;
+		
+	/*
+	
+	
 	case 0x12: // reti
 		PC = IORegister[7];
 		break;
@@ -286,8 +283,16 @@ void execute(instruction instr) {
 	case 0x14: // out
 		IORegister[instr.rs + instr.rt] = reg[instr.rd];
 		break;
-	case 0x15: // halt
-		PC = 0;
+
+		
+	 ALL OF THOSE INSTRUCTIONS ABOVE ARE FOR THE BONUS PART - ADD THEM IF WE DECIDE TO DO THE BONUS PART!!!!!!!!!!
+	 
+	 
+	 */ 
+
+		
+	case 0x12: // halt
+		PC = -5;
 		break;
 	}
 }
